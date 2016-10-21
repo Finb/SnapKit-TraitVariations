@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.summary = "A library to help you use Trait Variations with SnapKit"
   s.homepage = "https://github.com/Finb/SnapKit-TraitVariations"
   s.author = { "Fin" => "fin.uuid@gmail.com" }
-  s.source = { :git => 'https://github.com/Finb/SnapKit-TraitVariations.git', :tag => s.version.to_s }
+  s.source = { :git => 'https://github.com/Finb/SnapKit-TraitVariations.git', :tag => s.version }
 
   s.ios.deployment_target = '8.0'
 
