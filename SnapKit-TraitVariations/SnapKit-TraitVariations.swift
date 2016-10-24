@@ -49,6 +49,15 @@ extension TraitVariations where T : UIView {
     public var hR:TraitMakerExtendable {
         return self.make(traitAttribute: .hR);
     }
+    public func makeConstraints(_ closure: (_ make: ConstraintMaker) -> Void){
+        
+        let constraints = self.base.snp.prepareConstraints { (make) in
+            closure(make)
+        }
+        
+        self.completion(self.make(traitAttribute: .Any),constraints: constraints)
+    }
+    
     internal func make( traitAttribute: TraitAttributes) ->TraitMakerExtendable{
         return TraitMakerExtendable(traitAttribute,self.base){(traitMaker,constraints)in
             self.completion(traitMaker, constraints: constraints)
@@ -81,6 +90,7 @@ extension TraitVariations where T : UIView {
         }
         let key = NSString(string: "\(traitMaker.attributes.rawValue)")
         self.traitDictionary?.setObject(constraints, forKey: key)
+        self.activateIfNeed()
     }
     
     func activateIfNeed(){
@@ -90,7 +100,12 @@ extension TraitVariations where T : UIView {
         self.base.snp.removeConstraints()
         for (key,value) in dict {
             let constraintAttr = TraitAttributes(rawValue: UInt(key as! String)!)
-            print("c:" , constraintAttr.rawValue)
+            if(constraintAttr == .Any){
+                (value as! [Constraint]).forEach({ (constraint) in
+                    constraint.activate();
+                })
+                break;
+            }
             var viewAttr = TraitAttributes(rawValue: 0);
             let arr = [.wC, .wR, .hC, .hR] as [TraitAttributes]
             viewAttr += arr[self.base.traitCollection.horizontalSizeClass.rawValue - 1]
@@ -114,6 +129,7 @@ internal struct TraitAttributes: OptionSet {
     internal init(_ rawValue: UInt) {
         self.init(rawValue: rawValue)
     }
+    internal static var `Any`: TraitAttributes { return self.init(0) }
     
     internal static var wC: TraitAttributes { return self.init(1) }
     internal static var wR: TraitAttributes { return self.init(2) }
